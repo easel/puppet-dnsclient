@@ -8,19 +8,23 @@
 #
 class dnsclient {
 
-    file { "/etc/resolv.conf": 
-        content => template("dnsclient/resolv.conf.erb"),
-    } # file
-    case $operatingsystem {
-	Ubuntu, Debian: {
-		file { "/etc/dhcp3/dhclient.conf": 
-			content => template("dnsclient/dhclient.conf.erb"),
-		} # file
-	}
-	CentOS, RedHat: {
-		file { "/etc/dhclient.conf": 
-			content => template("dnsclient/dhclient.conf.erb"),
-		} # file
-	}
-    }
+    if $nameservers {
+        file { "/etc/resolv.conf": 
+            content => template("dnsclient/resolv.conf.erb"),
+        } # file
+    } #if
+    if $dnssearchpath {
+        case $operatingsystem {
+            Ubuntu, Debian: {
+                    file { "/etc/dhcp3/dhclient.conf": 
+                            content => template("dnsclient/dhclient.conf.erb"),
+                    } # file
+            }
+            CentOS, RedHat: {
+                    file { "/etc/dhclient.conf": 
+                            content => template("dnsclient/dhclient.conf.erb"),
+                    } # file
+            }
+        }
+    } #if
 } # class dnsclient
